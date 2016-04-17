@@ -60,7 +60,7 @@ Elegance Cut
                         <a href="#" class="title">{{$objCartItems[$item['item_id']]->name}}</a>
                         @if ($item['size'] != null)
                           <span>Size : {{$item['size']}}</span>
-                          <input type="hidden" id="item-size-{{item['item_id']}}" value="{{item['size']}}">
+                          <input type="hidden" id="item-size-{{$item['item_id']}}" value="{{$item['size']}}">
                         @endif
                       </div>
                       
