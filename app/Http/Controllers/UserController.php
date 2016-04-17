@@ -462,7 +462,9 @@ class UserController extends Controller
 		if(!$this->user_session->is_logged_in)
 			return redirect()->route('login');
 
-		return view('user.orders');
+		$objOrders = App\OrderMaster::where('user_id',$this->user_session->user_id)->get();
+
+		return view('user.orders',compact('objOrders'));
 	}
 
 

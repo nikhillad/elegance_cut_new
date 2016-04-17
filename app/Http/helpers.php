@@ -1,5 +1,42 @@
 <?php
 
+function checkAvailability($item_id,$size,$qty)
+{
+	$item = App\ItemMaster::where('item_master.item_id',$item_id)
+			->where('item_master.status',1)
+			->join('item_size_master','item_size_master.item_id', '=', 'item_master.item_id')
+			->join('size_master','size_master.size_id','=','item_size_master.size_id')
+			->where('item_size_master.qty','>=',$qty)
+			->where('size_master.size_code',$size)
+			->count();
+
+	if(null == $item)
+		return false;
+	else
+		return true;
+}
+
+function removePurchasedItemFromInventory($item_id,$size,$qty)
+{
+	$item = App\ItemSizeMaster::where('item_size_master.item_id',$item_id)
+			->join('size_master','size_master.size_id','=','item_size_master.size_id')
+			->where('size_master.size_code',$size)
+			->first();
+
+	$item->qty = $item->qty - $qty;
+
+	if($item->qty < 0)
+		$item->qty = 0;
+	try{
+		$item->save();
+		return true;
+	}
+	catch(\Exception $e)
+	{
+		return false;
+	}	
+}
+
 function getFutureDate($interval,$time = true)
 {
 	if($time)

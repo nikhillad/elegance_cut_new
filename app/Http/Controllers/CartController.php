@@ -37,6 +37,15 @@ class CartController extends Controller
 
     		if(null != $item)
     		{
+                //check if item still available
+                $isAvailable = checkAvailability($item->item_id,$value['size'],$value['qty']);
+
+                if(!$isAvailable)
+                {
+                    $item->available = false;
+                    $item->save();
+                }
+
     			//check if offers available for item type
     			//get coupon information if any	
 	            $intCouponMaster = DB::table('coupon_master')
@@ -57,7 +66,20 @@ class CartController extends Controller
             {
     			unset($arrCartItems[$key]);
                 //remove all the entries for perticular item_id from mongo
-                DB::connection('mongodb')->collection('cart')->where('item_id',$value['item_id'])->delete();
+                if($this->user_session->is_logged_in)
+                {
+                    $arrCartItems = DB::connection('mongodb')->collection('cart')
+                                    ->where( function ( $query )
+                                    {
+                                        $query->where('user_id',(int)$this->user_session->user_id)
+                                            ->orWhere('session_id',session_id());
+                                    })
+                                    ->where('item_id',(int)$value['item_id'])->delete();
+                }
+                else
+                {
+                    $arrCartItems = DB::connection('mongodb')->collection('cart')->where('session_id',session_id())->where('item_id',(int)$value['item_id'])->delete();
+                }
             }
     	}
 
@@ -102,41 +124,10 @@ class CartController extends Controller
 
     	if($qty != '' && $item_id != '' && $qty > 0 && is_numeric($qty))
     	{
-    		//check if given qty is valid
-    		$objItem = App\ItemMaster::where('item_id',$item_id)->where('status',1)->first();
-
-    		if(null == $objItem)
-    		{
-    			$return['error'] = true;
-    			$return['message'] = 'Invalid request.';
-    			return json_encode($return);
-    		}
-
-    		$show_size_chart=true;
-
-            if($show_size_chart==true)
-            {
-                //get item sizes
-                $objSizes = DB::table('item_size_master')->where('item_id',$objItem->item_id)
-                        ->join('size_master','size_master.size_id','=','item_size_master.size_id')
-                        ->select('item_size_master.*','size_master.*')
-                        ->get();
-
-                $arrSize_id_size_code = getKeyValueArray('size_id','size_code',$objSizes,'object',false);        
-            }
-
-            $total_available_qty = 0; 
-            if($show_size_chart)
-            {
-                foreach ($objSizes as $key => $value) {
-                    //check for current selected size
-                    if($value->size_code == $size)
-                        $total_available_qty = $total_available_qty + $value->qty;
-                }
-            } 
+            $isAvailable = checkAvailability($item_id,$size,$qty);
 
             //change quantity if every condition is satisfying
-    		if($qty != '' && is_numeric($qty) && $qty <= $total_available_qty)
+    		if($qty != '' && is_numeric($qty) && $isAvailable == true)
             {
 	    		if($this->user_session->is_logged_in)
 	    		{
@@ -205,7 +196,7 @@ class CartController extends Controller
     		}
 
     		//if item found both in database and cart
-    		if(null != $objItem && null != $objCartItem)
+    		if(null != $objItem && null != $objCartItem && checkAvailability($item_id,$objCartItem['size'],$objCartItem['qty']))
     		{
     			//check if item is still eligible for coupon addition
     			if($objCartItem->coupon_added == 1)
@@ -282,6 +273,14 @@ class CartController extends Controller
     	else
     		$arrCartItems = DB::connection('mongodb')->collection('cart')->where('session_id',session_id())->get();
     	
+        //remove items which are no more available
+        foreach ($arrCartItems as $key => $value) {
+            $isAvailable = checkAvailability($value['item_id'],$value['size'],$value['qty']);
+
+            if($isAvailable == false)
+                unset($arrCartItems[$key]);
+        }
+
         //redirect to cart if the cart is empty
         if(empty($arrCartItems))
         {
@@ -447,12 +446,18 @@ class CartController extends Controller
                 //fetch cart details
                 $arrCartItems = DB::connection('mongodb')->collection('cart')->where('user_id',(int)$uid)->get();
 
+                foreach ($arrCartItems as $key => $value) {
+                    if(!checkAvailability($value['item_id'],$value['size'],$value['qty']))
+                        unset($arrCartItems['key']);
+                }
+
                 if(!empty($arrCartItems))
                 {
                     $totalOrderAmount = 0;
                     //make entry in order master for each item
                     foreach ($arrCartItems as $key => $value) {
-                        $totalOrderAmount = $totalOrderAmount + $value['price'];
+                        if(checkAvailability($value['item_id'],$value['size'],$value['qty']))
+                            $totalOrderAmount = $totalOrderAmount + $value['price'];
                     }
 
                     //make entry in txn master and call payment gateway
@@ -472,7 +477,7 @@ class CartController extends Controller
                         $_SESSION['elegance_cut']['error'] = 'Something went wrong. Please try again.';
                         return redirect(route('checkout'));
                     }
-                    
+
                     //make entry in order master for each item
                     foreach ($arrCartItems as $key => $value) {
                         $objOrder = new App\OrderMaster();
@@ -483,10 +488,19 @@ class CartController extends Controller
                         $objOrder->price            = (float)$value['price'];
                         $objOrder->delivery_type    = 'prepaid';
                         $objOrder->delivery_date    = getFutureDate('10 days',false);
+                        $objOrder->qty              = $value['qty'];
+                        $objOrder->size             = $value['size'];
                         $objOrder->status           = Config('global.order_status.placed');
 
                         try{
                             $objOrder->save();
+
+                            //remove from cart
+                            $arrCartItems = DB::connection('mongodb')->collection('cart')
+                                            ->where('user_id',(int)$uid)
+                                            ->where('item_id',(int)$value['item_id'])
+                                            ->delete();
+                            
                         }
                         catch(\Exception $e)
                         {

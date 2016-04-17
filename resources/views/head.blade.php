@@ -180,6 +180,18 @@
         margin-left: 40px;
       }
 
+      .thumbnail-hover-label{
+        width: 100%;
+        height: 20px;
+        background-color: rgb(231, 33, 76);
+        position: relative;
+        top: 70%;
+        color: rgb(255, 255, 255);
+        text-align: center;
+        font-size: 12px;
+        font-weight: bold;
+      }
+      
       /* Small devices (tablets, 768px and up) */
       @media (min-width: 300px) {
         .intro-slider .bx-viewport{

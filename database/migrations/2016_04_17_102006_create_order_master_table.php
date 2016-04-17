@@ -17,6 +17,8 @@ class CreateOrderMasterTable extends Migration
             $table->integer('user_id');
             $table->integer('coupon_id');
             $table->float('price');
+            $table->integer('qty');
+            $table->string('size');
             $table->string('delivery_type',20)->default('prepaid');
             $table->date('delivery_date');
             $table->string('status',50);

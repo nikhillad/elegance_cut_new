@@ -19,7 +19,7 @@ class OrderMaster extends Model
      * @var array
      */
     protected $fillable = [
-        'order_id','txn_id','user_id', 'coupon_id', 'price', 'delivery_type', 'delivery_date', 'status'
+        'order_id','txn_id','user_id','qty','size','coupon_id', 'price', 'delivery_type', 'delivery_date', 'status'
     ];
 
      /**
