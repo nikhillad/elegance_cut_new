@@ -20,12 +20,14 @@ class CreateOrderMasterTable extends Migration
             $table->string('delivery_type',20)->default('prepaid');
             $table->date('delivery_date');
             $table->string('status',50);
+            $table->string('txn_id',25);
             $table->timestamps();
 
             $table->index('user_id');
             $table->index('coupon_id');
             $table->index('price');
             $table->index('status');
+            $table->index('txn_id');
         });
     }
 

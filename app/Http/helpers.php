@@ -1,5 +1,28 @@
 <?php
 
+function getFutureDate($interval,$time = true)
+{
+	if($time)
+	{
+		return date('Y-m-d H:i:s', strtotime("+".$interval, time()));
+	}
+	else
+	{
+		return date('Y-m-d', strtotime("+".$interval, time()));
+	}
+}
+
+function getPastDate($interval,$time = true)
+{
+	if($time)
+	{
+		return date('Y-m-d H:i:s', strtotime("-".$interval, time()));
+	}
+	else
+	{
+		return date('Y-m-d', strtotime("-".$interval, time()));
+	}
+}
 
 function getMongoDate($date)
 {

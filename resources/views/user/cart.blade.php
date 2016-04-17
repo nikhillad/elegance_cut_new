@@ -13,14 +13,6 @@ Elegance Cut
         <!-- Container -->
         <div class="container cont-pad-t-sm">
 
-          @if (count($arrCartItems) > 0)
-
-          <!-- generic header title -->
-          <div class="col-md-12 generic-page-header-left">
-            <h4>Shopping Cart</h4>
-          </div>
-          <div class="clearfix"></div>
-          
           @if (isset($_SESSION['elegance_cut']['error']) && $_SESSION['elegance_cut']['error'] != '')
           <div class="alert alert-danger alert-dismissible" role="alert">
             <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -34,6 +26,13 @@ Elegance Cut
             {{$_SESSION['elegance_cut']['success']}}
           </div>
           @endif
+
+          @if (count($arrCartItems) > 0)
+          <!-- generic header title -->
+          <div class="col-md-12 generic-page-header-left">
+            <h4>Shopping Cart</h4>
+          </div>
+          <div class="clearfix"></div>
 
           <div class="message-div"></div>
           <!-- Cart -->
@@ -184,12 +183,13 @@ Elegance Cut
           old_total = $('#total-hidden-'+item_id).val();
           old_subtotal = $('#subtotal-hidden').val();
           old_grandtotal = $('#grandtotal-hidden').val();
+          size = "{{$item['size']}}";
 
           //ajax call
           $.ajax({
               url: "{{route('change_qty')}}",
               type: "post",
-              data: 'item_id='+item_id+'&qty='+qty+'&_token={{csrf_token()}}',
+              data: 'size='+size+'&item_id='+item_id+'&qty='+qty+'&_token={{csrf_token()}}',
               dataType: 'json',
               success: function(data){
                   if(data['error'] ==  false)

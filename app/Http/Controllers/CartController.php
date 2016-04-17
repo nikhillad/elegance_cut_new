@@ -96,10 +96,11 @@ class CartController extends Controller
 
     public function change_qty(Request $request)
     {
-    	$qty = $request->input('qty','');
-    	$item_id = $request->input('item_id','');
+    	$qty       = $request->input('qty','');
+    	$item_id   = $request->input('item_id','');
+        $size      = $request->input('size','');
 
-    	if($qty != '' && $item_id != '' && $qty > 0)
+    	if($qty != '' && $item_id != '' && $qty > 0 && is_numeric($qty))
     	{
     		//check if given qty is valid
     		$objItem = App\ItemMaster::where('item_id',$item_id)->where('status',1)->first();
@@ -111,8 +112,7 @@ class CartController extends Controller
     			return json_encode($return);
     		}
 
-    		if($objItem->qty==null)
-                    $show_size_chart=true;
+    		$show_size_chart=true;
 
             if($show_size_chart==true)
             {
@@ -129,14 +129,11 @@ class CartController extends Controller
             if($show_size_chart)
             {
                 foreach ($objSizes as $key => $value) {
-                    $total_available_qty = $total_available_qty + $value->qty;
+                    //check for current selected size
+                    if($value->size_code == $size)
+                        $total_available_qty = $total_available_qty + $value->qty;
                 }
-            }
-            else
-            {
-                if($objItem->qty != null)
-                    $total_available_qty = $objItem->qty;
-            }    
+            } 
 
             //change quantity if every condition is satisfying
     		if($qty != '' && is_numeric($qty) && $qty <= $total_available_qty)
@@ -233,7 +230,8 @@ class CartController extends Controller
 	            	$discount_price = ($coupon_discount_rate/100)*$objCartItem->price;
 
 	            	$objCartItem->price = $objCartItem->price - $discount_price;
-	            	
+	            	$objCartItem->coupon_id = $objCouponMaster->coupon_id;
+
 	            	try{
 	            		$objCartItem->save();
 	            	}
@@ -284,6 +282,12 @@ class CartController extends Controller
     	else
     		$arrCartItems = DB::connection('mongodb')->collection('cart')->where('session_id',session_id())->get();
     	
+        //redirect to cart if the cart is empty
+        if(empty($arrCartItems))
+        {
+            return redirect(route('cart'));
+        }
+
     	//get states and countries from database
     	$arrStates = DB::connection('mongodb')->collection('states')->get();
 		$arrCountries = DB::connection('mongodb')->collection('countries')->get();	
@@ -434,11 +438,76 @@ class CartController extends Controller
             {
                 //retrieve user object from database
                 $objUser = App\UserMaster::where('user_id',$uid)->where('status',1)->first();
+                //check if the user is valid and active
+                if(null == $objUser)
+                {
+                    return redirect('home');
+                }
 
                 //fetch cart details
-                $arrCartItems = DB::connection('mongodb')->collection('cart')->where('user_id',$user_id)->get();
+                $arrCartItems = DB::connection('mongodb')->collection('cart')->where('user_id',(int)$uid)->get();
 
-                
+                if(!empty($arrCartItems))
+                {
+                    $totalOrderAmount = 0;
+                    //make entry in order master for each item
+                    foreach ($arrCartItems as $key => $value) {
+                        $totalOrderAmount = $totalOrderAmount + $value['price'];
+                    }
+
+                    //make entry in txn master and call payment gateway
+                    $objTxnMaster = new App\TxnMaster();
+
+                    $objTxnMaster->txn_id           = 'EC'.uniqid($uid,false);
+                    $objTxnMaster->user_id          = $objUser->user_id;
+                    $objTxnMaster->consumer_email   = $objUser->email;
+                    $objTxnMaster->consumer_phone   = $objUser->mobile;
+                    $objTxnMaster->amount           = $totalOrderAmount;
+
+                    try{
+                        $objTxnMaster->save();
+                    }
+                    catch(\Exception $e)
+                    {
+                        $_SESSION['elegance_cut']['error'] = 'Something went wrong. Please try again.';
+                        return redirect(route('checkout'));
+                    }
+
+                    //make entry in order master for each item
+                    foreach ($arrCartItems as $key => $value) {
+                        $objOrder = new App\OrderMaster();
+
+                        $objOrder->txn_id           = $objTxnMaster->txn_id;
+                        $objOrder->user_id          = $objUser->user_id;
+                        $objOrder->coupon_id        = isset($value['coupon_id']) ? $value['coupon_id'] : '';
+                        $objOrder->price            = $value['price'];
+                        $objOrder->delivery_type    = 'prepaid';
+                        $objOrder->delivery_date    = getFutureDate('10 days',false);
+                        $objOrder->status           = Config('global.order_status.placed');
+
+                        try{
+                            $objOrder->save();
+                        }
+                        catch(\Exception $e)
+                        {
+                            $_SESSION['elegance_cut']['error'] = 'Something went wrong. Please try again.';
+                            return redirect(route('checkout'));
+                        }
+                    }
+
+                    $product_info = 'Elegance cut clothes';
+
+                    //calculate hash
+                    $text = Config('global.payu.key').'|'.$objTxnMaster->txn_id.'|'.$objTxnMaster->amount.'|'.$product_info.'|'.$objUser->fname.'|'.$objUser->email.'|||||||||||'.Config('global.payu.salt');
+                    $hash = hash('sha512',$text);
+
+                    //call payment gateway
+                    return view('pg_loading',compact('objTxnMaster','hash','objUser','product_info'));
+                }
+                else
+                {
+                    return redirect(route('cart'));
+                }
             }
             else
             {
