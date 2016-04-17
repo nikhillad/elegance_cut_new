@@ -66,4 +66,5 @@ Route::group(['middleware' => ['web']], function () {
 
     Route::match(['get','post'], 'checkout', ['as' => 'checkout', 'uses' => 'CartController@checkout']);
 
+    Route::get('cart/make-payment/{uid}/{session}/{hash}', ['as' => 'make_payment', 'uses' => 'CartController@make_payment']);
 });

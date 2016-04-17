@@ -54,7 +54,11 @@ class CartController extends Controller
     			$objCartItems[$value['item_id']] = $item;
     		}
     		else
+            {
     			unset($arrCartItems[$key]);
+                //remove all the entries for perticular item_id from mongo
+                DB::connection('mongodb')->collection('cart')->where('item_id',$value['item_id'])->delete();
+            }
     	}
 
     	//shipping charges and vat
@@ -300,6 +304,7 @@ class CartController extends Controller
     	$message = '';
     	$open_tab = '';
 
+        //guest register form submit
     	if ($request->isMethod('post')) 
     	{
 
@@ -354,6 +359,7 @@ class CartController extends Controller
 			    		$open_tab = 'shippingAddressLink';
 			    	}
 
+                    //set user_id and user object to newly registered user
 			    	if(isset($res) && $res == true && empty($message))
 			    	{
 			    		$objUser = $objUserMaster;
@@ -383,7 +389,6 @@ class CartController extends Controller
 	    		$objCartItem->user_id = $user_id;
 	    		$objCartItem->save();
 	    	}
-
 	    }
 
 	    if(is_array($message))
@@ -398,6 +403,7 @@ class CartController extends Controller
     		$message = $temp;
     	}
 
+        //calculate cart total price and items count
     	$cart_total_price = 0;
     	$cart_total_items = 0;
 
@@ -409,9 +415,41 @@ class CartController extends Controller
     	//shipping charges and vat
     	$shipping_charges = 0;
     	$vat = 0;
-
     	$total_price = $cart_total_price + $shipping_charges + $vat;
 
-    	return view('user.checkout',compact('total_price','vat','shipping_charges','cart_total_items','cart_total_price','open_tab','form','arrCountries','arrStates','message','user_id','objUser','arrStates_code_state','arrCountries_code_country'));
+        //calculate hash for make payment page
+        $hash = md5($user_id.session_id().env('APP_KEY'));
+
+    	return view('user.checkout',compact('hash','total_price','vat','shipping_charges','cart_total_items','cart_total_price','open_tab','form','arrCountries','arrStates','message','user_id','objUser','arrStates_code_state','arrCountries_code_country'));
+    }
+
+    public function make_payment(Request $request,$uid,$session,$hash)
+    {
+        if($uid!='' && $session!='' && $hash!='')
+        {
+            //calculate hash
+            $calculated_hash = md5($uid.session_id().env('APP_KEY'));
+
+            if($calculated_hash ==  $hash)
+            {
+                //retrieve user object from database
+                $objUser = App\UserMaster::where('user_id',$uid)->where('status',1)->first();
+
+                //fetch cart details
+                $arrCartItems = DB::connection('mongodb')->collection('cart')->where('user_id',$user_id)->get();
+
+                
+            }
+            else
+            {
+                $_SESSION['elegance_cut']['error'] = 'Invalid session. Please try again.';
+                return redirect(route('checkout'));
+            }
+        }
+        else
+        {
+            $_SESSION['elegance_cut']['error'] = 'Oops! Something has gone wrong. Please try again.';
+            return redirect(route('checkout'));
+        }
     }
 }

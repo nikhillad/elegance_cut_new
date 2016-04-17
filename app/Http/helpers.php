@@ -1,5 +1,14 @@
 <?php
 
+
+function getMongoDate($date)
+{
+	date_default_timezone_set('UTC');
+	$date = new \MongoDate(strtotime($date));
+	date_default_timezone_set(Config('app.timezone'));
+	return $date;
+}
+
 function thumbnailImage($imagePath) {
     $imagick = new \Imagick(realpath($imagePath));
     $imagick->setbackgroundcolor('rgb(64, 64, 64)');

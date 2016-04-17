@@ -68,7 +68,7 @@
         text-align: center;
         margin-bottom: 10px;
       }
-       .generic-page-header-left{
+      .generic-page-header-left{
        
       }
       .generic-page-header-hr{
@@ -192,6 +192,10 @@
         .intro-slider .bx-viewport{
           height: 500px !important;
         }
+      }
+
+      .content-block{
+        min-height: 550px;
       }
     </style>
   </head>

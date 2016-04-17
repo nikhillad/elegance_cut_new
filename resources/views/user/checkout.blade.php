@@ -51,7 +51,7 @@ Elegance Cut
                           <p>Dont have an account? Pick one of the options below.</p>
                           <div class="radio"><label><input value="register" id="reg_type" name="reg_type" type="radio" checked>Register Account</label></div>
                           <div class="radio"><label><input value="guest" id="reg_type" name="reg_type" type="radio">Checkout as guest</label></div>
-                          <p>Register with us for a fast and easy checkout and easy access to your order history and status</p>
+                          <p>Register with us for a fast and easy checkout and easy access to your order history and status.</p>
                           <button id="btn-continue" class="btn btn-default btn-bigger">continue</button>
                         </div>
                         <div class="col-md-6">
@@ -166,7 +166,7 @@ Elegance Cut
                         </div> 
 
                         {{csrf_field()}}
-                        <button class="btn btn-default btn-lg">Submit</button>
+                        <button class="btn btn-default">Submit</button>
 
                       </form>
                     </div>
@@ -219,89 +219,18 @@ Elegance Cut
                         </div>
                     </div>
                   </div>
-                  <!-- /Collapse -->
-                </div>
-                <!-- /Panel -->
-                
-                <!-- Panel -->
-                <div class="panel panel-default">
-                  <!-- Heading -->
-                  <div class="panel-heading heading-iconed">
-                    <h4 class="panel-title">
-                    <a data-toggle="collapse" data-parent="#accordion" href="#collapseFour">
-                      <i class="icon-left">4</i> Payment Information
-                    </a>
-                    </h4>
-                  </div>
-                  <!-- /Heading -->
-                  
-                  <!-- Collapse -->
-                  <div id="collapseFour" class="panel-collapse collapse">
-                    <!-- Panel Body -->
-                    <div class="panel-body">
-                      <p>Please select a payment method.</p>
-                      <div class="radio"><label><input value="" name="acnt-opt" type="radio">Cash on delivery</label></div>
-                      <div class="radio"><label><input value="" name="acnt-opt" type="radio">Paypal</label></div>
-                      <div class="radio"><label><input value="" name="acnt-opt" type="radio" checked>Credit Card</label></div>
-                      <hr/>
-                      <div class="row">
-                        <div class="col-md-6">
-                          <div class="form-group">
-                              <label>Name on card</label>
-                              <input type="text" class="form-control" placeholder="Enter Name">
-                          </div>
-                        </div>
-                        <div class="col-md-6">
-                          <div class="form-group">
-                              <label>Credit card number</label>
-                              <input type="text" class="form-control" placeholder="Enter Name">
-                          </div>
-                        </div>
-                        <div class="col-md-4">
-                          <div class="form-group">
-                            <label>Card Type</label>
-                            <select class="form-control">
-                              <option>Select country</option>
-                              <option>England</option>
-                              <option>Germany</option>
-                              <option>France</option>
-                              <option>Spain</option>
-                            </select>
-                          </div>
-                        </div>
-                        <div class="col-md-4">
-                          <div class="form-group">
-                            <label>Expiration date</label>
-                            <select class="form-control">
-                              <option>Select city</option>
-                              <option>New York</option>
-                              <option>Paris</option>
-                              <option>Nairobi</option>
-                              <option>Cairo</option>
-                            </select>
-                          </div>
-                        </div>
-                        <div class="col-md-4">
-                          <div class="form-group">
-                              <label>CCV Code</label>
-                              <input type="text" class="form-control" placeholder="3 digits only">
-                          </div>
-                        </div>
-                      </div>
-                      <hr/>
-                      <button class="btn btn-primary btn-sm btn-bigger">complete order</button>
-                    </div>
-                  </div>
                 </div>
               </div>
+              @if ($user_id != null)     
+              <div class="object-center hidden-xs">            
+                <a href="{{route('make_payment',['uid'=>$user_id,'session'=>session_id(),'hash'=>$hash])}}" class="btn btn-primary">Make Payment & Complete order</a>
+              </div> 
+              @endif
             </div>
-            <!-- /Main Col -->
-            
+
             <!-- Side Col -->
             <div class="side-col col-md-3">
-
-              <!-- Side Widget -->
-              <div class="order-summary">
+             <div class="order-summary">
                 <table>
                   <tbody>
                     <tr>
@@ -323,7 +252,7 @@ Elegance Cut
                   </tbody>
                 </table>
                 <a href="{{route('cart')}}" class="btn btn-default btn-block btn-bigger">edit cart</a>
-                <a href="" class="btn btn-primary btn-block btn-bigger">complete order</a>
+                <a href="{{route('make_payment',['uid'=>$user_id,'session'=>session_id(),'hash'=>$hash])}}" class="btn btn-primary btn-block btn-bigger" {{($user_id == null) ? 'disabled' : ''}}>Make Payment</a>
               </div>
             </div>
           </div>

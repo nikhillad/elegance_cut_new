@@ -109,7 +109,8 @@ Elegance Cut
               <tr>
                 <td class="terms">  
                   <h5><i class="fa fa-info-circle"></i> our return policy</h5>
-                  <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip.</p>
+                  <p>We understand that shopping online can be tricky and we want you to be totally satisfied with your purchase. If you are not satisfied with your order or if there are any problems with your order, you can return your purchase for a refund or exchange to our fulfillment center.</p>
+                  <p>Read our <a href="return_policy.pdf">Return Policy</a>.
                </td>
                 <td class="totals"> 
                   <table class="cart-totals">
