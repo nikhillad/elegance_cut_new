@@ -21,7 +21,7 @@ class CreateCouponMasterTable extends Migration
             $table->string('coupon_code',10);
             $table->timestamps();
             $table->index('discount_percent');
-            $table->primary('coupon_code');
+            $table->unique('coupon_code');
         });
     }
 
