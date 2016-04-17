@@ -25,7 +25,6 @@ class CreateOrderMasterTable extends Migration
             $table->index('user_id');
             $table->index('coupon_id');
             $table->index('price');
-            $table->index('payment_status');
             $table->index('status');
         });
     }
