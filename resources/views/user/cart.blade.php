@@ -60,6 +60,7 @@ Elegance Cut
                         <a href="#" class="title">{{$objCartItems[$item['item_id']]->name}}</a>
                         @if ($item['size'] != null)
                           <span>Size : {{$item['size']}}</span>
+                          <input type="hidden" id="item-size-{{item['item_id']}}" value="{{item['size']}}">
                         @endif
                       </div>
                       
@@ -183,7 +184,7 @@ Elegance Cut
           old_total = $('#total-hidden-'+item_id).val();
           old_subtotal = $('#subtotal-hidden').val();
           old_grandtotal = $('#grandtotal-hidden').val();
-          size = "{{$item['size']}}";
+          size = $('#item-size-'+item_id).val();
 
           //ajax call
           $.ajax({
@@ -199,11 +200,8 @@ Elegance Cut
                       $('#qty-old-'+item_id).attr('value',qty);
                      
                       var new_total = price*qty;
-                      console.log(new_total);
-                      console.log(old_total);
-                      var diff = new_total-old_total;
-                       console.log(diff);
-                       console.log(old_subtotal);                     
+
+                      var diff = new_total-old_total;                 
 
                        //change total
                       $('#total-'+item_id).html('<span class="currency"></span><i class="fa fa-inr"></i> '+new_total);
