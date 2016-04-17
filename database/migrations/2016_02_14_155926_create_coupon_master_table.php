@@ -18,7 +18,7 @@ class CreateCouponMasterTable extends Migration
             $table->string('desc',250)->nullable();
             $table->float('discount_percent');
             $table->integer('status')->default(1);
-            $table->varchar('coupon_code',10);
+            $table->string('coupon_code',10);
             $table->timestamps();
             $table->index('discount_percent');
             $table->primary('coupon_code');
