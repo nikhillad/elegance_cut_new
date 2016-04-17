@@ -11,7 +11,11 @@
 |
 */
 
+Route::post('txn_successfull', ['as' => 'surl', 'uses' => 'PGResponseController@success']);
 
+Route::post('txn_failed', ['as' => 'furl', 'uses' => 'PGResponseController@fail']);
+
+Route::post('txn_cancelled', ['as' => 'curl', 'uses' => 'PGResponseController@cancel']);
 
 /*
 |--------------------------------------------------------------------------
@@ -67,10 +71,4 @@ Route::group(['middleware' => ['web']], function () {
     Route::match(['get','post'], 'checkout', ['as' => 'checkout', 'uses' => 'CartController@checkout']);
 
     Route::get('cart/make-payment/{uid}/{session}/{hash}', ['as' => 'make_payment', 'uses' => 'CartController@make_payment']);
-
-    Route::post('txn_successfull', ['as' => 'surl', 'uses' => 'PGResponseController@success']);
-
-    Route::post('txn_failed', ['as' => 'furl', 'uses' => 'PGResponseController@fail']);
-
-    Route::post('txn_cancelled', ['as' => 'curl', 'uses' => 'PGResponseController@cancel']);
 });
