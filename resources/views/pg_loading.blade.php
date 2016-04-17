@@ -15,7 +15,7 @@
 	<!-- Form -->
 	<form id="pay" method="post" action="{{Config('global.payu.initiate_txn_url')}}">
 		<input type="hidden" name="txnid" value="{{$objTxnMaster->txn_id}}">
-		<input type="hidden" name="amount" value="{{$objTxnMaster->amount}}">
+		<input type="hidden" name="amount" value="{{(float)$objTxnMaster->amount}}">
 		<input type="hidden" name="productinfo" value="{{$product_info}}">
 		<input type="hidden" name="firstname" value="{{$objUser->fname}}">
 		<input type="hidden" name="lastname" value="{{$objUser->lname}}">

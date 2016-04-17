@@ -472,7 +472,7 @@ class CartController extends Controller
                         $_SESSION['elegance_cut']['error'] = 'Something went wrong. Please try again.';
                         return redirect(route('checkout'));
                     }
-
+                    
                     //make entry in order master for each item
                     foreach ($arrCartItems as $key => $value) {
                         $objOrder = new App\OrderMaster();
@@ -480,7 +480,7 @@ class CartController extends Controller
                         $objOrder->txn_id           = $objTxnMaster->txn_id;
                         $objOrder->user_id          = $objUser->user_id;
                         $objOrder->coupon_id        = isset($value['coupon_id']) ? $value['coupon_id'] : '';
-                        $objOrder->price            = $value['price'];
+                        $objOrder->price            = (float)$value['price'];
                         $objOrder->delivery_type    = 'prepaid';
                         $objOrder->delivery_date    = getFutureDate('10 days',false);
                         $objOrder->status           = Config('global.order_status.placed');

@@ -27,5 +27,5 @@ class TxnMaster extends Model
      *
      * @var integer
      */
-    protected $primaryKey = 'txn_id';
+    protected $primaryKey = 'id';
 }
