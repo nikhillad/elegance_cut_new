@@ -42,7 +42,11 @@ class CartController extends Controller
 
                 if(!$isAvailable)
                 {
-                    $arrCartItems['available'] = false;
+                    $arrCartItems[$key]['available'] = false;
+                }
+                else
+                {
+                    $arrCartItems[$key]['available'] = true;
                 }
 
     			//check if offers available for item type
@@ -81,7 +85,7 @@ class CartController extends Controller
                 }
             }
     	}
-
+        
     	//shipping charges and vat
     	$shipping_charges = 0;
     	$vat = 0;
