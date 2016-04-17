@@ -127,7 +127,7 @@ class ItemController extends Controller
                             {
                                 //add to cart
                                 DB::connection('mongodb')->table('cart')->insert(
-                                    ['item_id' => (int)$objItem->item_id, 'user_id' => (int)$user_id, 'session_id' => session_id(), 'qty'=> (int)$qty, 'size' => $size, 'price' => (int)$objItem->price, 'coupon_added'=>0, 'available'=>true,'added_at'=>getMongoDate(date('Y-m-d H:i:s'))]
+                                    ['item_id' => (int)$objItem->item_id, 'user_id' => (int)$user_id, 'session_id' => session_id(), 'qty'=> (int)$qty, 'size' => $size, 'price' => (int)$objItem->price, 'coupon_added'=>0,'added_at'=>getMongoDate(date('Y-m-d H:i:s'))]
                                 );
 
                                 return redirect()->route('cart');

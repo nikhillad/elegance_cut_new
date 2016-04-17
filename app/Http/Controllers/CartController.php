@@ -42,8 +42,7 @@ class CartController extends Controller
 
                 if(!$isAvailable)
                 {
-                    $item->available = false;
-                    $item->save();
+                    $arrCartItems['available'] = false;
                 }
 
     			//check if offers available for item type
