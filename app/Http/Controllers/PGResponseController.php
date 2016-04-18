@@ -8,7 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Controllers\MailController;
 use Config;
 use DB;
-use APP;
+use App;
 
 class PGResponseController extends Controller
 {
