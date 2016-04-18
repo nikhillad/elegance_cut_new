@@ -43,7 +43,7 @@ class PGResponseController extends Controller
         $objTxnMaster->error = $error_Message;
         $objTxnMaster->bank_code = $bankcode;
         $objTxnMaster->pg_type = $PG_TYPE;
-        $objTxnMaster->bank_ref_no = $bank_ref_no;
+        $objTxnMaster->bank_ref_no = $bank_ref_num;
         $objTxnMaster->name_on_card = $name_on_card;
         $objTxnMaster->card_no = $cardnum;
         $objTxnMaster->issuing_bank = $issuing_bank;
