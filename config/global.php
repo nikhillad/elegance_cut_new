@@ -10,13 +10,13 @@ return [
 	'support_email' => 'support@elegancecut.com',
 	
 	'order_status' => [
-		'placed' => 'Order Placed',
-		'approved' => 'Order Approved',
-		'preparing' => 'Yet To Dispatch',
-		'dispatched' => 'Dispatched',
-		'onway' => 'On The Way',
-		'delivered' => 'Delivered',
-		'cancelled' => 'Cancelled'
+		'placed' 		=> 'Order Placed',
+		'approved' 		=> 'Order Approved',
+		'preparing' 	=> 'Preparing To Dispatch',
+		'dispatched' 	=> 'Dispatched',
+		'onway' 		=> 'On The Way',
+		'delivered' 	=> 'Delivered',
+		'cancelled' 	=> 'Cancelled'
 	],
 
 	'payu' => [

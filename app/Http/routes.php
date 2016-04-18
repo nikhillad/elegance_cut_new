@@ -11,11 +11,11 @@
 |
 */
 
-Route::post('txn_successfull', ['as' => 'surl', 'uses' => 'PGResponseController@success']);
+Route::post('/payment/success', ['as' => 'surl', 'uses' => 'PGResponseController@success']);
 
-Route::post('txn_failed', ['as' => 'furl', 'uses' => 'PGResponseController@fail']);
+Route::post('/payment/failed', ['as' => 'furl', 'uses' => 'PGResponseController@fail']);
 
-Route::post('txn_cancelled', ['as' => 'curl', 'uses' => 'PGResponseController@cancel']);
+Route::post('/payment/cancelled', ['as' => 'curl', 'uses' => 'PGResponseController@cancel']);
 
 /*
 |--------------------------------------------------------------------------

@@ -16,6 +16,7 @@ class CreateOrderMasterTable extends Migration
             $table->increments('order_id');
             $table->integer('user_id');
             $table->integer('coupon_id');
+            $table->integer('item_id');
             $table->float('price');
             $table->integer('qty');
             $table->string('size');
@@ -26,6 +27,7 @@ class CreateOrderMasterTable extends Migration
             $table->timestamps();
 
             $table->index('user_id');
+            $table->index('item_id');
             $table->index('coupon_id');
             $table->index('price');
             $table->index('status');

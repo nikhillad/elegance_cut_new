@@ -487,13 +487,14 @@ class CartController extends Controller
 
                         $objOrder->txn_id           = $objTxnMaster->txn_id;
                         $objOrder->user_id          = $objUser->user_id;
+                        $objOrder->item_id          = $value['item_id'];
                         $objOrder->coupon_id        = isset($value['coupon_id']) ? $value['coupon_id'] : '';
                         $objOrder->price            = (float)$value['price'];
                         $objOrder->delivery_type    = 'prepaid';
                         $objOrder->delivery_date    = getFutureDate('10 days',false);
                         $objOrder->qty              = $value['qty'];
                         $objOrder->size             = $value['size'];
-                        $objOrder->status           = Config('global.order_status.placed');
+                        $objOrder->status           = 'placed';
 
                         try{
                             $objOrder->save();

@@ -26,6 +26,10 @@ class CreateTxnMasterTable extends Migration
             $table->string('bank_code',50)->nullable();
             $table->string('pg_type',50)->nullable();
             $table->string('bank_ref_no',100)->nullable();
+            $table->string('name_on_card',100)->nullable();
+            $table->string('card_no',100)->nullable();
+            $table->string('issuing_bank',100)->nullable();
+            $table->string('card_type',100)->nullable();
             $table->timestamps();
 
             $table->unique('txn_id');
