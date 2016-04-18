@@ -52,7 +52,7 @@ class PGResponseController extends Controller
         $objTxnMaster->save();
 
         //update order master
-        App\OrderMaster::where('txn_id',$txn_id)->update('status','approved');
+        App\OrderMaster::where('txn_id',$txn_id)->update(array('status'=>'approved'));
 
         //decrease item qty from inventory
         $objOrders = App\OrderMaster::where('txn_id',$txn_id)->get();
