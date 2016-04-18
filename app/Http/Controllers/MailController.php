@@ -12,7 +12,7 @@ use DB;
 
 class MailController extends Controller
 {
-    public function send_txn_notification($status,$objTxnMaster)
+    public static function send_txn_notification($status,$objTxnMaster)
     {
     	//send email to user
     	
