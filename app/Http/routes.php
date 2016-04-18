@@ -11,7 +11,7 @@
 |
 */
 
-Route::get('/payment/success', ['as' => 'surl', 'uses' => 'PGResponseController@success']);
+Route::post('/payment/success', ['as' => 'surl', 'uses' => 'PGResponseController@success']);
 
 Route::post('/payment/failed', ['as' => 'furl', 'uses' => 'PGResponseController@fail']);
 
